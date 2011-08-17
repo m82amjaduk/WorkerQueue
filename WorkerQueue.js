@@ -10,12 +10,12 @@ WorkerQueue = function(frequency) {
   this.frequency = frequency;
 
   this.pop = function() {
-    if (!this.queue.length) {
-      window.clearInterval(this.timeout);
-      this.timeout = 0;
-      return;
-    }
     if (!this.current) {
+      if (!this.queue.length) {
+        window.clearInterval(this.timeout);
+        this.timeout = 0;
+        return;
+      }
       this.current = this.queue.shift();
     }
     if (this.current()) {
