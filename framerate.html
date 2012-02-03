@@ -1,0 +1,36 @@
+<script src="WorkerQueue/WorkerQueue.js" ></script>
+
+<h1>Frame rate</h1>
+<div id="q1" style="width:200px;height:100px;border:5px solid red"></div>
+<div id="q2" style="width:200px;height:100px;border:5px solid green"></div>
+<script>
+window.onload = function() {
+
+  var Thread = function(element, timeout) {
+    this.timestamp = new Date() - timeout;
+    this.average = Math.round(1000 / timeout);
+    this.count = 1;
+
+    this.tick = function() {
+      var n = new Date() - this.timestamp;
+      var fps = Math.round(1000 / n);
+      var target = Math.round(1000 / timeout);
+      this.average = (this.average + this.count * fps) / (this.count + 1);
+      element.innerHTML  = 'FPS ' + fps + ' of ' + target;
+      element.innerHTML += '<br/>';
+      element.innerHTML += 'AVG ' + this.average;
+      this.timestamp = new Date();
+      this.count++;
+    }
+  }
+
+  var q1 = new WorkerQueue(20);
+  var t1 = new Thread(document.getElementById('q1'), 20);
+  q1.push(function() { return t1.tick() });
+  var q2 = new WorkerQueue(200);
+  var t2 = new Thread(document.getElementById('q2'), 200);
+  q2.push(function() { return t2.tick() });
+
+}
+</script>
+
